@@ -144,6 +144,14 @@
             { text: "{deaths}",    width: "10%", align: "right", effect: deadYatsuEffect },
         ];
 
+        // 自キャラの名前リスト
+        var youNameList = ["Yonchu Stridberg", "Kuzuha Stridberg"];
+
+        // ペットリスト
+        var petList = ["ガルーダ・エギ", "イフリート・エギ", "タイタン・エギ",
+            "カーバンクル・エメラルド", "カーバンクル・トパーズ",
+            "オートタレット・ルーク", "オートタレット・ビショップ"];
+
         // 順位を表示する（text に関数を指定する例）
         // 引数:
         //  combatant : キャラクターのデータ。combatant["..."]でデータを取得できる。
@@ -286,6 +294,56 @@
             table.tHead = tableHeader;
         }
 
+        function isPet(combatant) {
+            //return false;
+            if (!combatant.Job === "") {
+                return false;
+            }
+            for(var i=0; i < petList.length; i++){
+                if (combatant.name.indexOf(petList[i]) === 0) {
+                  return true;
+                }
+            }
+            return false;
+        }
+
+        function plusOwner(data) {
+            for (var combatantName in data.Combatant) {
+                var combatant = data.Combatant[combatantName];
+                var ownerName = "";
+                if (!isPet(combatant)) {
+                    continue;
+                }
+                var owner = combatant.name.match(/[(](.+)[)]/);
+                if (owner !== null) {
+                    ownerName = owner[1]
+                    for (var i=0; i<youNameList.length; i++) {
+                        if (youNameList[i] === ownerName) {
+                            ownerName = "YOU";
+                            break;
+                        }
+                    }
+                }
+                for (var ownerCombName in data.Combatant) {
+                    var ownerComb = data.Combatant[ownerCombName];
+                    if (ownerComb.name === ownerName) {
+                        ownerComb.encdps = parseNum(ownerComb.encdps) + parseNum(combatant.encdps);
+                        ownerComb.Last30DPS = parseNum(ownerComb.Last30DPS) + parseNum(combatant.Last30DPS);
+                        ownerComb.ENCDPS = Math.round(ownerComb.encdps);
+                    }
+                }
+            }
+        }
+
+        function parseNum(num) {
+            // 不明な値は0として扱う
+            if (num === undefined || num == "+∞" ||
+                num == "---" || num === "") {
+                return 0;
+            }
+            return +num;
+        }
+
         // プレイヤーリストを更新する
         function updateCombatantList(data) {
             // 要素取得＆作成
@@ -294,10 +352,32 @@
             var newTableBody = document.createElement("tbody");
             newTableBody.id = "combatantTableBody";
 
+            // ペット合算
+            plusOwner(data);
+
+            // ソート
+            var ownerSort = [];
+            for (var combatantNameSub in data.Combatant) {
+                var combatantSub = data.Combatant[combatantNameSub];
+                ownerSort.push([combatantNameSub, parseNum(combatantSub.encdps)]);
+            }
+            ownerSort.sort(function(a,b){
+                var c = a[1];
+                var d = b[1];
+                if(c < d){return 1;}
+                if(c > d){return -1;}
+                return 0;
+            });
+
             // tbody の内容を作成
             var combatantIndex = 0;
-            for (var combatantName in data.Combatant) {
+            for (var j = 0; j < ownerSort.length; j++){
+                var combatantName = ownerSort[j][0];
                 var combatant = data.Combatant[combatantName];
+                // ペット非表示
+                if (isPet(combatant)) {
+                  continue;
+                }
                 var tableRow = newTableBody.insertRow(newTableBody.rows.length);
                 for (var i = 0; i < bodyDefine.length; i++)
                 {
