@@ -11,11 +11,12 @@
         * {
             /* フォント （一部のフォントは上手く適用されない） */
             font-family: "Meiryo";
-            font-size: 12px;
+            font-size: 18px;
         }
 
         body, html {
             margin: 0;
+            padding: 2 2 2 2;
         }
 
         html {
@@ -23,13 +24,14 @@
 
             /* 外枠 */
             /*border: 1px solid rgba(0,0,0,0.1);*/
-            
+
             /* はみ出た内容はスクロールバーを表示させずに隠す
              * 今のところ、ブラウザへの入力はできないので表示させても無意味 */
             overflow: hidden;
-            
+
             /* 背景色 */
             background-color: transparent;
+            background-color: rgba( 0, 0, 0, 0.55 );
         }
 
         .resizeHandle {
@@ -50,9 +52,11 @@
 
         /* キャラクターデータのテキストの設定 */
         #combatantTableBody * {
+            font-size: 16px;
             color: #E2EBF5;
             text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
             font-weight: 300;
+            padding: 1 4 1 4;
 
             /* はみ出たテキストを「…」で省略する */
             overflow: hidden;
@@ -63,15 +67,24 @@
         /* エンカウント情報とテーブルヘッダ内のテキストの設定 */
         #encounter,
         #combatantTableHeader * {
-            color: #DED7BE;
+            color: #DED75E;
             text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
             font-weight: 300;
             white-space: nowrap;
+            padding: 0 4 0 4;
+        }
+
+        #combatantTableHeader * {
+            font-size: 16px;
         }
 
         /* テーブルヘッダの下線の設定 */
         #combatantTableHeader tr {
             border-bottom: 1px solid #DED7BE;
+        }
+
+        #combatantTableBody tr:not(:last-child) {
+            border-bottom: 1px solid rgba(192, 192, 192, 0.25);
         }
 
     </style>
@@ -90,7 +103,7 @@
         // };
         //
         // データの更新は 1 秒毎。
-        // 
+        //
         // プラグインから onOverlayDataUpdate イベントが発行されるので、それを受信することもできる
         // イベントハンドラの第一引数の detail プロパティ内に上記のオブジェクトが入る
         //
@@ -135,7 +148,7 @@
         // 引数:
         //  combatant : キャラクターのデータ。combatant["..."]でデータを取得できる。
         //  index : キャラクターの並び順。一番上は 0 で、その後は 1 ずつ増える。
-        // 戻り値: 
+        // 戻り値:
         //  表示するテキスト。
         //  ACT のタグは展開されないので、展開したい場合は parseActFormat 関数を使用してください。
         function rankingText(combatant, index) {
@@ -345,7 +358,7 @@
                     }
                 }
             } while (currentIndex < str.length);
-            
+
             return result;
         }
 
