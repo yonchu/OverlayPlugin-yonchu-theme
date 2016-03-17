@@ -136,7 +136,7 @@
         [
             //{ text: rankingText, width: "5%", align: "center", effect: deadYatsuEffect },
             { text: "{name}",      width: "26%", align: "left" },
-            { html: "{Job}",       width: "10%", align: "left" },
+            { html: jobIcon,       width: "10%", align: "left" },
             { text: "{ENCDPS}",    width: "15%", align: "right" },
             { text: "{Last30DPS}", width: "15%", align: "right" },
             { text: "{ENCHPS}",    width: "15%", align: "right" },
@@ -155,7 +155,16 @@
             // 1 から始まる番号を返す
             return (index + 1).toString();
         }
-        
+
+        function jobIcon(combatant, index) {
+            var job = combatant["Job"];
+            if (job === "") {
+                job = "Job";
+            }
+            var ret = "<img src='./jobicon/" + job + ".png' width='22' height='22' />";
+            return ret;
+        }
+
         // 死亡奴を赤くする（effect の例）
         // 引数:
         //  cell : セルの DOM 要素
