@@ -113,7 +113,7 @@
         //
 
         // エンカウント情報の定義
-        var encounterDefine = "{title} / Time: {duration} / DPS: {ENCDPS}";
+        var encounterDefine = "Time: {duration} / Total DPS: {ENCDPS}";
 
         // 上記のエンカウント情報を HTML として扱うなら true
         var useHTMLEncounterDefine = false;
@@ -121,27 +121,27 @@
         // ヘッダの定義
         var headerDefine =
         [
-            //{ text: "#", width: "5%", align: "center" },
-            { text: "Name", width: "25%", align: "left" },
-            { text: "Job", width: "8%", align: "center" },
-            { text: "DPS (%)", width: "18%", align: "center", span: 2 },
-            { text: "HPS (%)", width: "18%", align: "center", span: 2 },
-            { text: "Acc.(%)", width: "16%", align: "right" },
-            { text: "Crt.(%)", width: "14%", align: "right" },
+            //{ text: "#",  width: "5%", align: "center" },
+            { text: "Name", width: "26%", align: "left" },
+            { text: "Job",  width: "10%", align: "left" },
+            { text: "DPS",  width: "15%", align: "right" },
+            { text: "L30D", width: "15%", align: "right" },
+            { text: "HPS",  width: "15%", align: "right" },
+            { text: "ﾐｽ",   width: "10%", align: "right" },
+            { text: "ﾃﾞｽ",  width: "10%", align: "right" },
         ];
 
         // 表示するデータの定義
         var bodyDefine =
         [
             //{ text: rankingText, width: "5%", align: "center", effect: deadYatsuEffect },
-            { text: "{name}", width: "25%" },
-            { text: "{Job}", width: "8%", align: "center" },
-            { text: "{encdps}", width: "16%", align: "right" },
-            { text: "{damage%}", width: "5%", align: "right" },
-            { text: "{enchps}", width: "16%", align: "right" },
-            { text: "{healed%}", width: "5%", align: "right" },
-            { text: "{tohit}%", width: "16%", align: "right" },
-            { text: "{crithit%}", width: "14%", align: "right" },
+            { text: "{name}",      width: "26%", align: "left" },
+            { html: "{Job}",       width: "10%", align: "left" },
+            { text: "{ENCDPS}",    width: "15%", align: "right" },
+            { text: "{Last30DPS}", width: "15%", align: "right" },
+            { text: "{ENCHPS}",    width: "15%", align: "right" },
+            { text: "{misses}",    width: "10%", align: "right", effect:  missYatsuEffect },
+            { text: "{deaths}",    width: "10%", align: "right", effect: deadYatsuEffect },
         ];
 
         // 順位を表示する（text に関数を指定する例）
@@ -172,6 +172,15 @@
                 cell.style.textShadow = "-1px 0 3px #802020, 0 1px 3px #802020, 1px 0 3px #802020, 0 -1px 3px #802020";
             }
         }
+
+        function missYatsuEffect(cell, combatant, index) {
+            var misses = parseInt(combatant["misses"]);
+            if (misses > 0) {
+                cell.style.color = "#FFA0A0";
+                cell.style.textShadow = "-1px 0 3px #802020, 0 1px 3px #802020, 1px 0 3px #802020, 0 -1px 3px #802020";
+            }
+        }
+
 
         //
         // 以下表示用スクリプト
