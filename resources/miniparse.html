@@ -152,6 +152,13 @@
             "カーバンクル・エメラルド", "カーバンクル・トパーズ",
             "オートタレット・ルーク", "オートタレット・ビショップ"];
 
+        var petAbbr = {
+            Gar: "ｶﾞﾙｰﾀﾞ", Ifr: "ｲﾌﾘｰﾄ", Tit: "ﾀｲﾀﾝ",
+            Eos: "ｴｵｽ", Sle: "ｾﾚﾈ",
+            Eme: "ｴﾒﾗﾙﾄﾞ", Tpz: "ﾄﾊﾟｰｽﾞ",
+            Atr: "ﾙｰｸ", Atb: "ﾋﾞｼｮｯﾌﾟ"
+        };
+
         // 順位を表示する（text に関数を指定する例）
         // 引数:
         //  combatant : キャラクターのデータ。combatant["..."]でデータを取得できる。
@@ -342,6 +349,13 @@
             return combatant;
         }
 
+        function createPetAbbr(combatant) {
+          var abbrName = petAbbr[combatant.iconName];
+          if (abbrName != null) {
+              combatant.name = abbrName + "(" + combatant.ownerName + ")";
+          }
+        }
+
         function isPet(combatant) {
             if (combatant.Job !== "") {
                 return false;
@@ -368,6 +382,7 @@
                 var combatant = data.Combatant[combatantName];
                 createOwnerName(combatant);
                 createIconName(combatant);
+                createPetAbbr(combatant);
                 // ペット合算
                 if (isPet(combatant)) {
                   for (var ownerCombName in data.Combatant) {
