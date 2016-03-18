@@ -165,11 +165,7 @@
         }
 
         function jobIcon(combatant, index) {
-            var job = combatant["Job"];
-            if (job === "") {
-                job = "Job";
-            }
-            var ret = "<img src='./jobicon/" + job + ".png' width='22' height='22' />";
+            var ret = "<img src='./jobicon/" + combatant.iconName + ".png' width='22' height='22' />";
             return ret;
         }
 
@@ -297,7 +293,7 @@
         // ペットのオーナー名を設定
         function createOwnerName(combatant) {
           combatant.ownerName = "";
-          if (combatant.Job === "") {
+          if (combatant.Job !== "") {
               return combatant;
           }
           // OwnerNameを設定
@@ -339,15 +335,15 @@
             } else if (combatant.name.indexOf("オートタレット・ビショップ") === 0 || combatant.name.indexOf("Bishop Autoturret") === 0) {
                 combatant.iconName = "Atb";
             } else if (combatant.name.indexOf("Limit Break") === 0) {
-                combatant.iconName = "LtB";
-            } else if (combatant.ownerName !=== "" && !combatant.name.match(/[^a-zA-Z()'\s]/)) {
+                combatant.iconName = "Ltb";
+            } else if (combatant.ownerName !== "" && !combatant.name.match(/[^a-zA-Z()'\s]/)) {
                 combatant.iconName = "Cho";
             }
             return combatant;
         }
 
         function isPet(combatant) {
-            if (!combatant.Job === "") {
+            if (combatant.Job !== "") {
                 return false;
             }
             for(var i=0; i < petList.length; i++){
@@ -371,12 +367,12 @@
             for (var combatantName in data.Combatant) {
                 var combatant = data.Combatant[combatantName];
                 createOwnerName(combatant);
-                createIconName(combatant):
+                createIconName(combatant);
                 // ペット合算
                 if (isPet(combatant)) {
                   for (var ownerCombName in data.Combatant) {
                       var ownerComb = data.Combatant[ownerCombName];
-                      if (ownerComb.name === ownerName) {
+                      if (ownerComb.name === combatant.ownerName) {
                           ownerComb.encdps = parseNum(ownerComb.encdps) + parseNum(combatant.encdps);
                           ownerComb.Last30DPS = parseNum(ownerComb.Last30DPS) + parseNum(combatant.Last30DPS);
                           ownerComb.ENCDPS = Math.round(ownerComb.encdps);
