@@ -294,8 +294,59 @@
             table.tHead = tableHeader;
         }
 
+        // ペットのオーナー名を設定
+        function createOwnerName(combatant) {
+          combatant.ownerName = "";
+          if (combatant.Job === "") {
+              return combatant;
+          }
+          // OwnerNameを設定
+          var owner = combatant.name.match(/[(](.+)[)]/);
+          if (owner !== null) {
+              combatant.ownerName = owner[1];
+              for (var i=0; i<youNameList.length; i++) {
+                  if (youNameList[i] === combatant.ownerName) {
+                      combatant.ownerName = "YOU";
+                      break;
+                  }
+              }
+          }
+          return combatant;
+        }
+
+        function createIconName(combatant) {
+            if (combatant.Job === "") {
+                combatant.iconName = "Err";
+            } else {
+                combatant.iconName = combatant.Job;
+            }
+            if (combatant.name.indexOf("ガルーダ・エギ") === 0 || combatant.name.indexOf("Garuda-Egi") === 0) {
+                combatant.iconName = "Gar";
+            } else if (combatant.name.indexOf("イフリート・エギ") === 0 || combatant.name.indexOf("Ifrit-Egi") === 0) {
+                combatant.iconName = "Ifr";
+            } else if (combatant.name.indexOf("タイタン・エギ") === 0 || combatant.name.indexOf("Titan-Egi") === 0) {
+                combatant.iconName = "Tit";
+            } else if (combatant.name.indexOf("フェアリー・エオス") === 0 || combatant.name.indexOf("Eos") === 0) {
+                combatant.iconName = "Eos";
+            } else if (combatant.name.indexOf("フェアリー・セレネ") === 0 || combatant.name.indexOf("Selene") === 0) {
+                combatant.iconName = "Sle";
+            } else if (combatant.name.indexOf("カーバンクル・エメラルド") === 0 || combatant.name.indexOf("Emerald Carbuncle") === 0) {
+                combatant.iconName = "Eme";
+            } else if (combatant.name.indexOf("カーバンクル・トパーズ") === 0 || combatant.name.indexOf("Topaz Carbuncle") === 0) {
+                combatant.iconName = "Tpz";
+            } else if (combatant.name.indexOf("オートタレット・ルーク") === 0 || combatant.name.indexOf("Rook Autoturret") === 0) {
+                combatant.iconName = "Atr";
+            } else if (combatant.name.indexOf("オートタレット・ビショップ") === 0 || combatant.name.indexOf("Bishop Autoturret") === 0) {
+                combatant.iconName = "Atb";
+            } else if (combatant.name.indexOf("Limit Break") === 0) {
+                combatant.iconName = "LtB";
+            } else if (combatant.ownerName !=== "" && !combatant.name.match(/[^a-zA-Z()'\s]/)) {
+                combatant.iconName = "Cho";
+            }
+            return combatant;
+        }
+
         function isPet(combatant) {
-            //return false;
             if (!combatant.Job === "") {
                 return false;
             }
@@ -307,34 +358,6 @@
             return false;
         }
 
-        function plusOwner(data) {
-            for (var combatantName in data.Combatant) {
-                var combatant = data.Combatant[combatantName];
-                var ownerName = "";
-                if (!isPet(combatant)) {
-                    continue;
-                }
-                var owner = combatant.name.match(/[(](.+)[)]/);
-                if (owner !== null) {
-                    ownerName = owner[1]
-                    for (var i=0; i<youNameList.length; i++) {
-                        if (youNameList[i] === ownerName) {
-                            ownerName = "YOU";
-                            break;
-                        }
-                    }
-                }
-                for (var ownerCombName in data.Combatant) {
-                    var ownerComb = data.Combatant[ownerCombName];
-                    if (ownerComb.name === ownerName) {
-                        ownerComb.encdps = parseNum(ownerComb.encdps) + parseNum(combatant.encdps);
-                        ownerComb.Last30DPS = parseNum(ownerComb.Last30DPS) + parseNum(combatant.Last30DPS);
-                        ownerComb.ENCDPS = Math.round(ownerComb.encdps);
-                    }
-                }
-            }
-        }
-
         function parseNum(num) {
             // 不明な値は0として扱う
             if (num === undefined || num == "+∞" ||
@@ -344,18 +367,36 @@
             return +num;
         }
 
+        function customizeData(data) {
+            for (var combatantName in data.Combatant) {
+                var combatant = data.Combatant[combatantName];
+                createOwnerName(combatant);
+                createIconName(combatant):
+                // ペット合算
+                if (isPet(combatant)) {
+                  for (var ownerCombName in data.Combatant) {
+                      var ownerComb = data.Combatant[ownerCombName];
+                      if (ownerComb.name === ownerName) {
+                          ownerComb.encdps = parseNum(ownerComb.encdps) + parseNum(combatant.encdps);
+                          ownerComb.Last30DPS = parseNum(ownerComb.Last30DPS) + parseNum(combatant.Last30DPS);
+                          ownerComb.ENCDPS = Math.round(ownerComb.encdps);
+                      }
+                  }
+                }
+            }
+        }
+
         // プレイヤーリストを更新する
         function updateCombatantList(data) {
+            customizeData(data);
+
             // 要素取得＆作成
             var table = document.getElementById('combatantTable');
             var oldTableBody = table.tBodies.namedItem('combatantTableBody');
             var newTableBody = document.createElement("tbody");
             newTableBody.id = "combatantTableBody";
 
-            // ペット合算
-            plusOwner(data);
-
-            // ソート
+            // 再ソート
             var ownerSort = [];
             for (var combatantNameSub in data.Combatant) {
                 var combatantSub = data.Combatant[combatantNameSub];
