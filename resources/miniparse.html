@@ -413,14 +413,16 @@
                 createPetAbbr(combatant);
                 // ペット合算
                 if (combatant.isPetAddUp) {
-                  for (var ownerCombName in data.Combatant) {
-                      var ownerComb = data.Combatant[ownerCombName];
-                      if (ownerComb.name === combatant.ownerName) {
-                          ownerComb.encdps = parseNum(ownerComb.encdps) + parseNum(combatant.encdps);
-                          ownerComb.Last30DPS = parseNum(ownerComb.Last30DPS) + parseNum(combatant.Last30DPS);
-                          ownerComb.ENCDPS = Math.round(ownerComb.encdps);
-                      }
-                  }
+                    combatant.isPetAddUp = false;
+                    for (var ownerCombName in data.Combatant) {
+                        var ownerComb = data.Combatant[ownerCombName];
+                        if (ownerComb.name === combatant.ownerName) {
+                            ownerComb.encdps = parseNum(ownerComb.encdps) + parseNum(combatant.encdps);
+                            ownerComb.Last30DPS = parseNum(ownerComb.Last30DPS) + parseNum(combatant.Last30DPS);
+                            ownerComb.ENCDPS = Math.round(ownerComb.encdps);
+                            combatant.isPetAddUp = true;
+                        }
+                    }
                 }
             }
         }
