@@ -1,8 +1,8 @@
-# Overlay Plugin Yonchu Theme
+# OverlayPlugin Yonchu Theme
 
 FF14 ACT OverlayPlugin のテーマ
 
-![screenshot01](https://raw.github.com/yonchu/OverlayPlugin-yonchu-theme/master/img/screenshot01.png)
+![act_overlayplugin_miniparse](https://raw.github.com/yonchu/OverlayPlugin-yonchu-theme/master/img/screenshot01.png)
 
 # 特徴
 
