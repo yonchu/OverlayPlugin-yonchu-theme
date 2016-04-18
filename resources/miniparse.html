@@ -333,28 +333,28 @@
 
         // ペットのオーナー名を設定
         function createOwnerName(combatant) {
-          combatant.ownerName = "";
-          combatant.isPetAddUp = false;
-          if (combatant.Job !== "") {
-              return combatant;
-          }
-          // OwnerNameを設定
-          var owner = combatant.name.match(/[(](.+)[)]/);
-          if (owner !== null) {
-              combatant.ownerName = owner[1];
-              for (var i=0; i<youNameList.length; i++) {
-                  if (youNameList[i] === combatant.ownerName) {
-                      combatant.ownerName = "YOU";
-                      break;
-                  }
-              }
-          }
-          for (var j=0; j<petAddUpList.length; j++) {
-              if (combatant.name.indexOf(petAddUpList[j]) === 0) {
-                  combatant.isPetAddUp = true;
-              }
-          }
-          return combatant;
+            combatant.ownerName = "";
+            combatant.isPetAddUp = false;
+            if (combatant.Job !== "") {
+                return combatant;
+            }
+            // OwnerNameを設定
+            var owner = combatant.name.match(/[(](.+)[)]/);
+            if (owner !== null) {
+                combatant.ownerName = owner[1];
+                for (var i=0; i<youNameList.length; i++) {
+                    if (youNameList[i] === combatant.ownerName) {
+                        combatant.ownerName = "YOU";
+                        break;
+                    }
+                }
+            }
+            for (var j=0; j<petAddUpList.length; j++) {
+                if (combatant.name.indexOf(petAddUpList[j]) === 0) {
+                    combatant.isPetAddUp = true;
+                }
+            }
+            return combatant;
         }
 
         function createIconName(combatant) {
@@ -390,10 +390,10 @@
         }
 
         function createPetAbbr(combatant) {
-          var abbrName = petAbbr[combatant.iconName];
-          if (abbrName != null) {
-              combatant.name = abbrName + " (" + combatant.ownerName + ")";
-          }
+            var abbrName = petAbbr[combatant.iconName];
+            if (abbrName != null) {
+                combatant.name = abbrName + " (" + combatant.ownerName + ")";
+            }
         }
 
         function createMaxHit(data) {
@@ -487,7 +487,7 @@
                 var combatant = data.Combatant[combatantName];
                 // ペット非表示
                 if (combatant.isPetAddUp) {
-                  continue;
+                    continue;
                 }
                 var tableRow = newTableBody.insertRow(newTableBody.rows.length);
                 for (var i = 0; i < bodyDefine.length; i++)
