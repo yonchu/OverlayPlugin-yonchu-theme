@@ -443,7 +443,7 @@
             }
             // OwnerNameを設定
             var owner = combatant.name.match(/[(](.+)[)]/);
-            if (owner !== null) {
+            if (owner != null) {
                 combatant.ownerName = owner[1];
                 for (var i=0; i<youNameList.length; i++) {
                     if (youNameList[i] === combatant.ownerName) {
@@ -501,15 +501,19 @@
 
         function createMaxHit(data) {
             var maxHit = data.Encounter.maxhit.match(/([^-]+)-(.+)-([0-9,.]+)/);
-            if (maxHit !== null && maxHit.length >= 3) {
-                data.Encounter.maxhit = maxHit[3].replace(",", "") +  " (" + maxHit[1] + ":" + toHalfKana(maxHit[2]) + ")";
+            if (maxHit != null && maxHit.length >= 3) {
+                var name = maxHit[1].match(/([^ ]+ .).*/);
+                if (name == null || name.length < 1) {
+                    name = maxHit;
+                }
+                data.Encounter.maxhit = maxHit[3].replace(",", "") +  " (" + name[1] + ":" + toHalfKana(maxHit[2]) + ")";
             }
         }
 
         function createMyMaxHit(data, combatant) {
             if (combatant.name === "YOU") {
                 var myMaxHit = combatant.maxhit.match(/(.+)-([0-9,.]+)/);
-                if (myMaxHit !== null && myMaxHit.length >= 2) {
+                if (myMaxHit != null && myMaxHit.length >= 2) {
                     data.Encounter.myMaxHit = myMaxHit[2].replace(",", "") + " (" + toHalfKana(myMaxHit[1]) + ")";
                 }
             }
