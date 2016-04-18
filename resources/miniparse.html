@@ -331,6 +331,109 @@
             table.tHead = tableHeader;
         }
 
+        // プレイヤーリストを更新する
+        function updateCombatantList(data) {
+            customizeData(data);
+
+            // 要素取得＆作成
+            var table = document.getElementById('combatantTable');
+            var oldTableBody = table.tBodies.namedItem('combatantTableBody');
+            var newTableBody = document.createElement("tbody");
+            newTableBody.id = "combatantTableBody";
+
+            // 再ソート
+            var ownerSort = [];
+            for (var combatantNameSub in data.Combatant) {
+                var combatantSub = data.Combatant[combatantNameSub];
+                ownerSort.push([combatantNameSub, parseNum(combatantSub.encdps)]);
+            }
+            ownerSort.sort(function(a,b){
+                var c = a[1];
+                var d = b[1];
+                if(c < d){return 1;}
+                if(c > d){return -1;}
+                return 0;
+            });
+
+            // tbody の内容を作成
+            var combatantIndex = 0;
+            for (var j = 0; j < ownerSort.length; j++){
+                var combatantName = ownerSort[j][0];
+                var combatant = data.Combatant[combatantName];
+                // ペット非表示
+                if (combatant.isPetAddUp) {
+                    continue;
+                }
+                var tableRow = newTableBody.insertRow(newTableBody.rows.length);
+                for (var i = 0; i < bodyDefine.length; i++)
+                {
+                    var cell = tableRow.insertCell(i);
+                    // テキスト設定
+                    if (typeof bodyDefine[i].text !== 'undefined') {
+                        var cellText;
+                        if (typeof bodyDefine[i].text === 'function') {
+                            cellText = bodyDefine[i].text(combatant, combatantIndex);
+                        } else {
+                            cellText = parseActFormat(bodyDefine[i].text, combatant);
+                        }
+                        cell.innerText = cellText;
+                    } else if (typeof bodyDefine[i].html !== 'undefined') {
+                        var cellHTML;
+                        if (typeof bodyDefine[i].html === 'function') {
+                            cellHTML = bodyDefine[i].html(combatant, combatantIndex);
+                        } else {
+                            cellHTML = parseActFormat(bodyDefine[i].html, combatant);
+                        }
+                        cell.innerHTML = cellHTML;
+                    }
+                    // 幅設定
+                    cell.style.width = bodyDefine[i].width;
+                    cell.style.maxWidth = bodyDefine[i].width;
+                    // 行構え設定
+                    if (typeof(bodyDefine[i].align) !== 'undefined') {
+                        cell.style.textAlign = bodyDefine[i].align;
+                    }
+                    // エフェクト実行
+                    if (typeof bodyDefine[i].effect === 'function') {
+                        bodyDefine[i].effect(cell, combatant, combatantIndex);
+                    }
+                }
+                combatantIndex++;
+            }
+
+            // tbody が既に存在していたら置換、そうでないならテーブルに追加
+            if (oldTableBody != void(0)) {
+                table.replaceChild(newTableBody, oldTableBody);
+            }
+            else {
+                table.appendChild(newTableBody);
+            }
+        }
+
+        function customizeData(data) {
+            createMaxHit(data);
+            for (var combatantName in data.Combatant) {
+                var combatant = data.Combatant[combatantName];
+                createOwnerName(combatant);
+                createIconName(combatant);
+                createPetAbbr(combatant);
+                createMyMaxHit(data, combatant);
+                // ペット合算
+                if (combatant.isPetAddUp) {
+                    combatant.isPetAddUp = false;
+                    for (var ownerCombName in data.Combatant) {
+                        var ownerComb = data.Combatant[ownerCombName];
+                        if (ownerComb.name === combatant.ownerName) {
+                            ownerComb.encdps = parseNum(ownerComb.encdps) + parseNum(combatant.encdps);
+                            ownerComb.Last30DPS = parseNum(ownerComb.Last30DPS) + parseNum(combatant.Last30DPS);
+                            ownerComb.ENCDPS = Math.round(ownerComb.encdps);
+                            combatant.isPetAddUp = true;
+                        }
+                    }
+                }
+            }
+        }
+
         // ペットのオーナー名を設定
         function createOwnerName(combatant) {
             combatant.ownerName = "";
@@ -430,109 +533,6 @@
                 return 0;
             }
             return +num;
-        }
-
-        function customizeData(data) {
-            createMaxHit(data);
-            for (var combatantName in data.Combatant) {
-                var combatant = data.Combatant[combatantName];
-                createOwnerName(combatant);
-                createIconName(combatant);
-                createPetAbbr(combatant);
-                createMyMaxHit(data, combatant);
-                // ペット合算
-                if (combatant.isPetAddUp) {
-                    combatant.isPetAddUp = false;
-                    for (var ownerCombName in data.Combatant) {
-                        var ownerComb = data.Combatant[ownerCombName];
-                        if (ownerComb.name === combatant.ownerName) {
-                            ownerComb.encdps = parseNum(ownerComb.encdps) + parseNum(combatant.encdps);
-                            ownerComb.Last30DPS = parseNum(ownerComb.Last30DPS) + parseNum(combatant.Last30DPS);
-                            ownerComb.ENCDPS = Math.round(ownerComb.encdps);
-                            combatant.isPetAddUp = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        // プレイヤーリストを更新する
-        function updateCombatantList(data) {
-            customizeData(data);
-
-            // 要素取得＆作成
-            var table = document.getElementById('combatantTable');
-            var oldTableBody = table.tBodies.namedItem('combatantTableBody');
-            var newTableBody = document.createElement("tbody");
-            newTableBody.id = "combatantTableBody";
-
-            // 再ソート
-            var ownerSort = [];
-            for (var combatantNameSub in data.Combatant) {
-                var combatantSub = data.Combatant[combatantNameSub];
-                ownerSort.push([combatantNameSub, parseNum(combatantSub.encdps)]);
-            }
-            ownerSort.sort(function(a,b){
-                var c = a[1];
-                var d = b[1];
-                if(c < d){return 1;}
-                if(c > d){return -1;}
-                return 0;
-            });
-
-            // tbody の内容を作成
-            var combatantIndex = 0;
-            for (var j = 0; j < ownerSort.length; j++){
-                var combatantName = ownerSort[j][0];
-                var combatant = data.Combatant[combatantName];
-                // ペット非表示
-                if (combatant.isPetAddUp) {
-                    continue;
-                }
-                var tableRow = newTableBody.insertRow(newTableBody.rows.length);
-                for (var i = 0; i < bodyDefine.length; i++)
-                {
-                    var cell = tableRow.insertCell(i);
-                    // テキスト設定
-                    if (typeof bodyDefine[i].text !== 'undefined') {
-                        var cellText;
-                        if (typeof bodyDefine[i].text === 'function') {
-                            cellText = bodyDefine[i].text(combatant, combatantIndex);
-                        } else {
-                            cellText = parseActFormat(bodyDefine[i].text, combatant);
-                        }
-                        cell.innerText = cellText;
-                    } else if (typeof bodyDefine[i].html !== 'undefined') {
-                        var cellHTML;
-                        if (typeof bodyDefine[i].html === 'function') {
-                            cellHTML = bodyDefine[i].html(combatant, combatantIndex);
-                        } else {
-                            cellHTML = parseActFormat(bodyDefine[i].html, combatant);
-                        }
-                        cell.innerHTML = cellHTML;
-                    }
-                    // 幅設定
-                    cell.style.width = bodyDefine[i].width;
-                    cell.style.maxWidth = bodyDefine[i].width;
-                    // 行構え設定
-                    if (typeof(bodyDefine[i].align) !== 'undefined') {
-                        cell.style.textAlign = bodyDefine[i].align;
-                    }
-                    // エフェクト実行
-                    if (typeof bodyDefine[i].effect === 'function') {
-                        bodyDefine[i].effect(cell, combatant, combatantIndex);
-                    }
-                }
-                combatantIndex++;
-            }
-
-            // tbody が既に存在していたら置換、そうでないならテーブルに追加
-            if (oldTableBody != void(0)) {
-                table.replaceChild(newTableBody, oldTableBody);
-            }
-            else {
-                table.appendChild(newTableBody);
-            }
         }
 
         // Miniparse フォーマット文字列を解析し、表示文字列を取得する
