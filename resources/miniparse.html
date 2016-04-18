@@ -11,7 +11,7 @@
         * {
             /* フォント （一部のフォントは上手く適用されない） */
             font-family: "Meiryo";
-            font-size: 18px;
+            font-size: 16px;
         }
 
         body, html {
@@ -130,7 +130,7 @@
         //
 
         // エンカウント情報の定義
-        var encounterDefine = "Time: {duration} / Total DPS: {ENCDPS}";
+        var encounterDefine = "Time: {duration} / Total DPS: {ENCDPS}\n{maxhit} / {myMaxHit}";
 
         // 上記のエンカウント情報を HTML として扱うなら true
         var useHTMLEncounterDefine = false;
@@ -264,11 +264,11 @@
 
         // 表示要素の更新
         function update(data) {
-            updateEncounter(data);
             if (document.getElementById("combatantTableHeader") == null) {
                 updateCombatantListHeader();
             }
             updateCombatantList(data);
+            updateEncounter(data);
         }
 
         // エンカウント情報を更新する
@@ -396,6 +396,33 @@
           }
         }
 
+        function createMaxHit(data) {
+            var maxHit = data.Encounter.maxhit.match(/([^-]+)-(.+)-([0-9,.]+)/);
+            if (maxHit !== null && maxHit.length >= 3) {
+                data.Encounter.maxhit = maxHit[3].replace(",", "") +  " (" + maxHit[1] + ":" + toHalfKana(maxHit[2]) + ")";
+            }
+        }
+
+        function createMyMaxHit(data, combatant) {
+            if (combatant.name === "YOU") {
+                var myMaxHit = combatant.maxhit.match(/(.+)-([0-9,.]+)/);
+                if (myMaxHit !== null && myMaxHit.length >= 2) {
+                    data.Encounter.myMaxHit = myMaxHit[2].replace(",", "") + " (" + toHalfKana(myMaxHit[1]) + ")";
+                }
+            }
+        }
+
+        function toHalfKana(src){
+            hankaku = new Array("ｶﾞ", "ｷﾞ", "ｸﾞ", "ｹﾞ", "ｺﾞ", "ｻﾞ", "ｼﾞ", "ｽﾞ", "ｾﾞ", "ｿﾞ", "ﾀﾞ", "ﾁﾞ", "ﾂﾞ", "ﾃﾞ", "ﾄﾞ", "ﾊﾞ", "ﾊﾟ", "ﾋﾞ", "ﾋﾟ", "ﾌﾞ", "ﾌﾟ", "ﾍﾞ", "ﾍﾟ", "ﾎﾞ", "ﾎﾟ", "ｳﾞ", "ｧ", "ｱ", "ｨ", "ｲ", "ｩ", "ｳ", "ｪ", "ｴ", "ｫ", "ｵ", "ｶ", "ｷ", "ｸ", "ｹ", "ｺ", "ｻ", "ｼ", "ｽ", "ｾ", "ｿ", "ﾀ", "ﾁ", "ｯ", "ﾂ", "ﾃ", "ﾄ", "ﾅ", "ﾆ", "ﾇ", "ﾈ", "ﾉ", "ﾊ", "ﾋ", "ﾌ", "ﾍ", "ﾎ", "ﾏ", "ﾐ", "ﾑ", "ﾒ", "ﾓ", "ｬ", "ﾔ", "ｭ", "ﾕ", "ｮ", "ﾖ", "ﾗ", "ﾘ", "ﾙ", "ﾚ", "ﾛ", "ﾜ", "ｦ", "ﾝ", "｡", "｢", "｣", "､", "･", "ｰ", "ﾞ", "ﾟ");
+            zenkaku  = new Array("ガ", "ギ", "グ", "ゲ", "ゴ", "ザ", "ジ", "ズ", "ゼ", "ゾ", "ダ", "ヂ", "ヅ", "デ", "ド", "バ", "パ", "ビ", "ピ", "ブ", "プ", "ベ", "ペ", "ボ", "ポ", "ヴ", "ァ", "ア", "ィ", "イ", "ゥ", "ウ", "ェ", "エ", "ォ", "オ", "カ", "キ", "ク", "ケ", "コ", "サ", "シ", "ス", "セ", "ソ", "タ", "チ", "ッ", "ツ", "テ", "ト", "ナ", "ニ", "ヌ", "ネ", "ノ", "ハ", "ヒ", "フ", "ヘ", "ホ", "マ", "ミ", "ム", "メ", "モ", "ャ", "ヤ", "ュ", "ユ", "ョ", "ヨ", "ラ", "リ", "ル", "レ", "ロ", "ワ", "ヲ", "ン", "。", "「", "」", "、", "・", "ー", "゛", "゜");
+            for (i=0; i<=zenkaku.length; i++) {
+                while (src.indexOf(zenkaku[i]) >= 0){
+                    src = src.replace(zenkaku[i], hankaku[i]);
+                }
+            }
+            return src;
+        }
+
         function parseNum(num) {
             // 不明な値は0として扱う
             if (num === undefined || num == "+∞" ||
@@ -406,11 +433,13 @@
         }
 
         function customizeData(data) {
+            createMaxHit(data);
             for (var combatantName in data.Combatant) {
                 var combatant = data.Combatant[combatantName];
                 createOwnerName(combatant);
                 createIconName(combatant);
                 createPetAbbr(combatant);
+                createMyMaxHit(data, combatant);
                 // ペット合算
                 if (combatant.isPetAddUp) {
                     combatant.isPetAddUp = false;
