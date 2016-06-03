@@ -500,6 +500,9 @@
         }
 
         function createMaxHit(data) {
+            if (data.Encounter.maxhit == null) {
+                return;
+            }
             var maxHit = data.Encounter.maxhit.match(/([^-]+)-(.+)-([0-9,.]+)/);
             if (maxHit != null && maxHit.length >= 3) {
                 var name = maxHit[1].match(/([^ ]+ .).*/);
