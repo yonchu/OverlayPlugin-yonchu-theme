@@ -509,7 +509,7 @@
                 if (name == null || name.length < 1) {
                     name = maxHit;
                 }
-                data.Encounter.maxhit = maxHit[3].replace(",", "") +  " (" + name[1] + ":" + toHalfKana(maxHit[2]) + ")";
+                data.Encounter.maxhit = maxHit[3].replace(",", "") +  " (" + toHalfKana(name[1]) + ":" + toHalfKana(maxHit[2]) + ")";
             }
         }
 
