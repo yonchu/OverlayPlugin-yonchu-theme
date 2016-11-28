@@ -46,7 +46,6 @@ body {
 
 #enmity .outer {
   height: 100%;
-  padding: 10px;
 }
 
 #enmity .inner {
@@ -61,7 +60,6 @@ body {
   top: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  -webkit-filter: blur(5px);
   z-index: -1;
 }
 
@@ -90,33 +88,40 @@ body {
   color: #DED7BE;
   text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
   font-weight: 300;
-  white-space: nowrap;
-  padding: 2px;
-}
-
-#target .name {
-  width: 100%;
-  position: relative;
-  bottom: 0;
-}
-
-#target .gauge {
-  position: absolute;
-  display: block;
-  bottom: 2px;
-  height: 2px;
-  z-index: -1;
+  padding: 2;
 }
 
 #target .header {
+  clear: both;
+}
+
+#target .name {
   color: #DED7BE;
   text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
   font-weight: 300;
+  overflow: hidden;
   white-space: nowrap;
-  text-align: left;
+  text-overflow: ellipsis;
 }
 
-#target .value, #entries .name {
+#target .distance {
+  color: #E2EBF5;
+  text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
+  font-weight: 300;
+  float: right;
+}
+
+
+/* Enmity entries */
+#entries {
+  padding: 2px;
+}
+
+#entries .content {
+  margin-bottom: 4px;
+}
+
+#entries .name {
   color: #E2EBF5;
   text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
   font-weight: 300;
@@ -125,16 +130,28 @@ body {
   text-overflow: ellipsis;
 }
 
-/* Enmity entries */
-#entries {
- padding: 2px;
-}
-
 #entries .enmity {
   float: right;
   color: #E2EBF5;
   text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
   font-weight: 300;
+}
+
+#entries .enmity .enmity-value {
+}
+
+#entries .enmity .enmity-diff {
+  display: inline;
+}
+
+#entries .enmity .enmity-alert {
+  color: #FFB7B7;
+  text-shadow:-1px 0 2px #802020, 0 1px 2px #802020, 1px 0 2px #802020, 0 -1px 2px #802020;
+}
+
+#entries .enmity .enmity-warn {
+  color: #DED7BE;
+  text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
 }
 
 #entries .content .me {
@@ -151,8 +168,7 @@ body {
 #entries .gauge {
   position: absolute;
   display: block;
-  bottom: 2px;
-  height: 3px;
+  bottom: 3px;
+  height: 70%;
   z-index: -1;
 }
-

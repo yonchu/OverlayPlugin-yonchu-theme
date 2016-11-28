@@ -56,7 +56,7 @@ Vue.filter('hpcolor', function (t) {
 });
 
 Vue.filter('you', function (v) {
-  return v.isMe ? "YOU" : v.Name;
+  return v.isMe ? "YOU" : v.Name.split(" ")[0];
 });
 
 // データ処理
@@ -90,7 +90,23 @@ var enmity = new Vue({
     },
     toggleCollapse: function() {
       this.collapsed = !this.collapsed;
-    }
+    },
+    enmityDiff: function(entries, index) {
+      var ret = "";
+      var diff = 0;
+      var cls = "";
+      if (index > 0) {
+        diff = entries[index-1].Enmity - entries[index].Enmity;
+        if (index == 1) {
+          if (diff < 25000) {
+            cls = "class='enmity-alert'";
+          } else if (diff < 100000) {
+            cls = "class='enmity-warn'";
+          }
+        }
+        ret = "(<span " + cls + ">" + diff + "</span>)";
+      }
+      return ret;
+    },
   }
 });
-
