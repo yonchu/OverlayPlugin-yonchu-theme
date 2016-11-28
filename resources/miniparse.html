@@ -518,6 +518,8 @@
                 var myMaxHit = combatant.maxhit.match(/(.+)-([0-9,.]+)/);
                 if (myMaxHit != null && myMaxHit.length >= 2) {
                     data.Encounter.myMaxHit = myMaxHit[2].replace(",", "") + " (" + toHalfKana(myMaxHit[1]) + ")";
+                } else {
+                    data.Encounter.myMaxHit = ""
                 }
             }
         }
